@@ -2,18 +2,19 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 
+
 class Settings(BaseSettings):
     # Supabase
     SUPABASE_URL: str
-    SUPABASE_SERVICE_KEY: str
+    SUPABASE_SERVICE_ROLE_KEY: str
 
     # OpenRouter LLM
     OPENROUTER_MODEL: str
     OPENROUTER_API_KEY: str
 
     # JWT
-    SECRET_KEY: str
-    ALGORITHM: str = "HS256"
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 

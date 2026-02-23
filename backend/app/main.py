@@ -6,6 +6,7 @@ from app.api.v1 import auth, ai_assistant
 # Import dependencies for proper loading
 from app.api.dependencies import get_current_user
 
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Healthcare Management System API",
