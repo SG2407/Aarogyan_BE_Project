@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import io
@@ -26,7 +25,7 @@ def delete_document(doc_id: str, user_id: str = Depends(lambda: "00000000-0000-0
     if file_url:
         # Extract storage path from URL
         storage_path = file_url.split(f"/{BUCKET_NAME}/")[-1]
-        supabase.storage().from_(BUCKET_NAME).remove([storage_path])
+        supabase.storage.from_(BUCKET_NAME).remove([storage_path])
     # Remove from table
     supabase.table("medical_documents").delete().eq("id", doc_id).eq("user_id", user_id).execute()
     return {"detail": "Document deleted."}
@@ -128,7 +127,7 @@ async def upload_document(
     # Upload to Supabase Storage
     file_ext = os.path.splitext(file.filename)[-1]
     storage_path = f"{user_id}/{file.filename}"
-    res = supabase.storage().from_(BUCKET_NAME).upload(storage_path, upload_bytes, file.content_type)
+    res = supabase.storage.from_(BUCKET_NAME).upload(storage_path, upload_bytes, file.content_type)
     if not res.get("Key"):
         raise HTTPException(status_code=500, detail="Failed to upload file to storage.")
     file_url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET_NAME}/{storage_path}"
