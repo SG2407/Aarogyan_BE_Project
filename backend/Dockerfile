@@ -4,7 +4,19 @@ FROM python:3.11-slim
 # Set work directory
 WORKDIR /app
 
-# Install dependencies
+
+# Install system dependencies for Tesseract OCR
+RUN apt-get update && \
+	apt-get install -y --no-install-recommends \
+	tesseract-ocr \
+	libtesseract-dev \
+	libleptonica-dev \
+	poppler-utils \
+	unpaper \
+	ghostscript \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 

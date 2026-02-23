@@ -4,6 +4,7 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../settings/settings_screen.dart';
 import '../ai_assistant_screen.dart';
+import '../document_digitizing/document_digitizing_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -82,6 +83,19 @@ class HomeScreen extends ConsumerWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const AiAssistantScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.document_scanner),
+                title: const Text('Document Digitizing'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DocumentDigitizingScreen(),
                     ),
                   );
                 },

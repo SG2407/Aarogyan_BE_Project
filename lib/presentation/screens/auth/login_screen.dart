@@ -40,6 +40,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        // Navigate to dashboard after successful login
+        Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
       if (mounted) {

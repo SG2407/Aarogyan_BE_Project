@@ -1,3 +1,6 @@
+tesserocr
+pillow
+openai
 bcrypt==4.1.2
 fastapi==0.109.2
 uvicorn[standard]==0.27.1
