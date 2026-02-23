@@ -107,7 +107,7 @@ You are a medical assistant. Summarize and explain the following medical documen
     return response.choices[0].message.content.strip()
 
 
-@router.post("/documents/upload")
+@router.post("/upload")
 async def upload_document(
     file: UploadFile = File(...),
     user_id: str = Depends(lambda: "demo-user-id")  # Replace with real auth

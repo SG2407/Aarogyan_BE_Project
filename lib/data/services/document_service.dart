@@ -1,10 +1,12 @@
-  Future<void> deleteDocument(String docId) async {
-    await _dio.delete('/documents/$docId');
-  }
+
 import 'package:dio/dio.dart';
 import '../../core/config/api_config.dart';
 
 class DocumentService {
+
+    Future<void> deleteDocument(String docId) async {
+      await _dio.delete('/documents/$docId');
+    }
   final Dio _dio;
 
   DocumentService([Dio? dio])
