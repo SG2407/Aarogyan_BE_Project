@@ -6,8 +6,8 @@ import '../data/services/storage_service.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
-  dio.options.baseUrl =
-      'http://10.0.2.2:8000/api/v1'; // Use 10.0.2.2 for Android emulator
+    dio.options.baseUrl =
+      'https://aarogyan-be-project-1.onrender.com/api/v1'; // Use deployed Render backend for production
 
   dio.interceptors.add(
     InterceptorsWrapper(

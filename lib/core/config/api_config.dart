@@ -3,7 +3,7 @@ class ApiConfig {
   // Change this to your backend URL
   // For local testing on physical device: use your computer's IP
   // For local testing on emulator: use 10.0.2.2 (Android) or localhost (iOS)
-  static const String baseUrl = 'http://10.0.2.2:8000/api/v1';
+  static const String baseUrl = 'https://aarogyan-be-project-1.onrender.com/api/v1';
 
   // Endpoints
   static const String register = '/auth/register';
