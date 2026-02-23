@@ -7,6 +7,10 @@ print('ENVIRONMENT VARIABLES:', dict(os.environ))
 
 
 class Settings(BaseSettings):
+        # For compatibility with code expecting settings.ALGORITHM
+        @property
+        def ALGORITHM(self) -> str:
+            return self.JWT_ALGORITHM
     # Supabase
     SUPABASE_URL: str
     SUPABASE_SERVICE_ROLE_KEY: str
