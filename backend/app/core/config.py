@@ -1,5 +1,8 @@
+
 from pydantic_settings import BaseSettings
 from typing import Optional
+import os
+print('ENVIRONMENT VARIABLES:', dict(os.environ))
 
 
 
