@@ -1,4 +1,18 @@
 
+import io
+import os
+import tempfile
+from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from PIL import Image
+import tesserocr
+import requests
+from app.core.config import settings
+from supabase import create_client, Client
+import openai
+
+router = APIRouter()
+
 @router.get("/list")
 def list_documents(user_id: str = Depends(lambda: "demo-user-id")):
     # Fetch all documents for the user
@@ -15,19 +29,6 @@ def get_document(doc_id: str, user_id: str = Depends(lambda: "demo-user-id")):
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found.")
     return doc
-import io
-import os
-import tempfile
-from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
-from fastapi.responses import JSONResponse
-from PIL import Image
-import tesserocr
-import requests
-from app.core.config import settings
-from supabase import create_client, Client
-import openai
-
-router = APIRouter()
 
 # Initialize Supabase client
 SUPABASE_URL = settings.SUPABASE_URL

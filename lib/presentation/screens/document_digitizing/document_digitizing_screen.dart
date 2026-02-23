@@ -3,12 +3,12 @@ import 'package:file_picker/file_picker.dart';
 import '../../../data/services/document_service.dart';
 import 'dart:async';
 
-
 class DocumentDigitizingScreen extends StatefulWidget {
   const DocumentDigitizingScreen({Key? key}) : super(key: key);
 
   @override
-  State<DocumentDigitizingScreen> createState() => _DocumentDigitizingScreenState();
+  State<DocumentDigitizingScreen> createState() =>
+      _DocumentDigitizingScreenState();
 }
 
 class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
@@ -108,9 +108,7 @@ class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Document Digitizing'),
-      ),
+      appBar: AppBar(title: const Text('Document Digitizing')),
       drawer: Drawer(
         child: SafeArea(
           child: _isLoadingDocs
@@ -118,19 +116,28 @@ class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
               : ListView(
                   children: [
                     const DrawerHeader(
-                      child: Text('Your Documents', style: TextStyle(fontSize: 20)),
+                      child: Text(
+                        'Your Documents',
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
-                    ..._documents.map((doc) => ListTile(
-                          leading: const Icon(Icons.description),
-                          title: Text(doc['file_name'] ?? 'Document'),
-                          subtitle: Text(doc['created_at'] ?? ''),
-                          selected: _selectedDocument != null && _selectedDocument!['id'] == doc['id'],
-                          onTap: () => _selectDocument(doc),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: _isDeleting ? null : () => _deleteDocument(doc['id']),
-                          ),
-                        )),
+                    ..._documents.map(
+                      (doc) => ListTile(
+                        leading: const Icon(Icons.description),
+                        title: Text(doc['file_name'] ?? 'Document'),
+                        subtitle: Text(doc['created_at'] ?? ''),
+                        selected:
+                            _selectedDocument != null &&
+                            _selectedDocument!['id'] == doc['id'],
+                        onTap: () => _selectDocument(doc),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: _isDeleting
+                              ? null
+                              : () => _deleteDocument(doc['id']),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
         ),
@@ -174,7 +181,10 @@ class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
               ],
               const SizedBox(height: 24),
               if (_explanation != null && _explanation!.isNotEmpty) ...[
-                const Text('Explanation:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Explanation:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(12),

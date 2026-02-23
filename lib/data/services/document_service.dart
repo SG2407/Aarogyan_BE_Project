@@ -4,14 +4,17 @@ import '../../core/config/api_config.dart';
 class DocumentService {
   final Dio _dio;
 
-  DocumentService([Dio? dio]) : _dio = dio ?? Dio(
-    BaseOptions(
-      baseUrl: ApiConfig.baseUrl,
-      connectTimeout: ApiConfig.connectTimeout,
-      receiveTimeout: ApiConfig.receiveTimeout,
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
+  DocumentService([Dio? dio])
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              baseUrl: ApiConfig.baseUrl,
+              connectTimeout: ApiConfig.connectTimeout,
+              receiveTimeout: ApiConfig.receiveTimeout,
+              headers: {'Content-Type': 'application/json'},
+            ),
+          );
 
   Future<List<dynamic>> listDocuments() async {
     final response = await _dio.get('/documents/list');
