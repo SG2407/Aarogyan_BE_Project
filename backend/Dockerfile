@@ -8,8 +8,9 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app code
+# Copy app code, but do NOT copy .env (let Render inject env vars)
 COPY . .
+RUN rm -f .env
 
 # Expose port (match your uvicorn port)
 EXPOSE 10000
