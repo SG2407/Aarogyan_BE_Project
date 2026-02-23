@@ -1,22 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+
 from app.api.v1 import auth, ai_assistant, document_digitizing
-app.include_router(
-    document_digitizing.router,
-    prefix=f"{settings.API_V1_PREFIX}/documents",
-    tags=["Document Digitizing"]
-)
 
 # Import dependencies for proper loading
 from app.api.dependencies import get_current_user
-
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Healthcare Management System API",
     version="1.0.0",
     debug=settings.DEBUG
+)
+
+app.include_router(
+    document_digitizing.router,
+    prefix=f"{settings.API_V1_PREFIX}/documents",
+    tags=["Document Digitizing"]
 )
 
 # CORS Middleware - Allow Flutter app to make requests
