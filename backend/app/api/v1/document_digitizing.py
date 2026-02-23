@@ -1,4 +1,18 @@
 
+from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
+from fastapi.responses import JSONResponse
+import io
+import os
+import tempfile
+from PIL import Image
+import tesserocr
+import requests
+from app.core.config import settings
+from supabase import create_client, Client
+import openai
+
+router = APIRouter()
+
 # Delete document endpoint
 @router.delete("/{doc_id}")
 def delete_document(doc_id: str, user_id: str = Depends(lambda: "00000000-0000-0000-0000-000000000000")):
@@ -16,20 +30,6 @@ def delete_document(doc_id: str, user_id: str = Depends(lambda: "00000000-0000-0
     # Remove from table
     supabase.table("medical_documents").delete().eq("id", doc_id).eq("user_id", user_id).execute()
     return {"detail": "Document deleted."}
-
-import io
-import os
-import tempfile
-from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
-from fastapi.responses import JSONResponse
-from PIL import Image
-import tesserocr
-import requests
-from app.core.config import settings
-from supabase import create_client, Client
-import openai
-
-router = APIRouter()
 
 @router.get("/list")
 def list_documents(user_id: str = Depends(lambda: "00000000-0000-0000-0000-000000000000")):
