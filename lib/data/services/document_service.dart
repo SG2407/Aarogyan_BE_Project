@@ -1,3 +1,6 @@
+  Future<void> deleteDocument(String docId) async {
+    await _dio.delete('/documents/$docId');
+  }
 import 'package:dio/dio.dart';
 import '../../core/config/api_config.dart';
 
@@ -18,7 +21,7 @@ class DocumentService {
 
   Future<List<dynamic>> listDocuments() async {
     final response = await _dio.get('/documents/list');
-    return response.data as List<dynamic>;
+    return response.data['documents'] as List<dynamic>;
   }
 
   Future<Map<String, dynamic>> getDocument(String docId) async {

@@ -1,4 +1,22 @@
 
+# Delete document endpoint
+@router.delete("/{doc_id}")
+def delete_document(doc_id: str, user_id: str = Depends(lambda: "00000000-0000-0000-0000-000000000000")):
+    # Fetch document to get storage path
+    res = supabase.table("medical_documents").select("*").eq("id", doc_id).eq("user_id", user_id).single().execute()
+    doc = res.data if hasattr(res, 'data') else res.get('data', None)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found.")
+    # Remove from storage
+    file_url = doc.get("file_url")
+    if file_url:
+        # Extract storage path from URL
+        storage_path = file_url.split(f"/{BUCKET_NAME}/")[-1]
+        supabase.storage().from_(BUCKET_NAME).remove([storage_path])
+    # Remove from table
+    supabase.table("medical_documents").delete().eq("id", doc_id).eq("user_id", user_id).execute()
+    return {"detail": "Document deleted."}
+
 import io
 import os
 import tempfile
@@ -14,7 +32,7 @@ import openai
 router = APIRouter()
 
 @router.get("/list")
-def list_documents(user_id: str = Depends(lambda: "demo-user-id")):
+def list_documents(user_id: str = Depends(lambda: "00000000-0000-0000-0000-000000000000")):
     # Fetch all documents for the user
     res = supabase.table("medical_documents").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
     docs = res.data if hasattr(res, 'data') else res.get('data', [])
@@ -22,7 +40,7 @@ def list_documents(user_id: str = Depends(lambda: "demo-user-id")):
 
 
 @router.get("/{doc_id}")
-def get_document(doc_id: str, user_id: str = Depends(lambda: "demo-user-id")):
+def get_document(doc_id: str, user_id: str = Depends(lambda: "00000000-0000-0000-0000-000000000000")):
     # Fetch a specific document by id for the user
     res = supabase.table("medical_documents").select("*").eq("id", doc_id).eq("user_id", user_id).single().execute()
     doc = res.data if hasattr(res, 'data') else res.get('data', None)

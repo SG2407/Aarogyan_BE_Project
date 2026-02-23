@@ -51,16 +51,22 @@ class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
 
   Future<void> _deleteDocument(String docId) async {
     setState(() => _isDeleting = true);
-    // TODO: Implement delete API call
-    await Future.delayed(const Duration(milliseconds: 800));
-    setState(() {
-      _documents.removeWhere((d) => d['id'] == docId);
-      if (_selectedDocument != null && _selectedDocument!['id'] == docId) {
-        _selectedDocument = null;
-        _explanation = null;
-      }
-      _isDeleting = false;
-    });
+    try {
+      await DocumentService().deleteDocument(docId);
+      setState(() {
+        _documents.removeWhere((d) => d['id'] == docId);
+        if (_selectedDocument != null && _selectedDocument!['id'] == docId) {
+          _selectedDocument = null;
+          _explanation = null;
+        }
+        _isDeleting = false;
+      });
+    } catch (e) {
+      setState(() => _isDeleting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete document: $e')),
+      );
+    }
   }
 
   Future<void> _pickFile() async {
