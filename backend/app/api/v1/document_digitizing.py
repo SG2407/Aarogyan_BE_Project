@@ -133,24 +133,35 @@ async def upload_document(
     res = supabase.storage.from_(BUCKET_NAME).upload(
         storage_path,
         upload_bytes,
-        {"content-type": file.content_type, "upsert": True}
+        {"content-type": file.content_type},
+        upsert=True
     )
     if not hasattr(res, "key") or not res.key:
         raise HTTPException(status_code=500, detail="Failed to upload file to storage.")
     file_url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET_NAME}/{storage_path}"
 
-    # OCR extraction
-    if file.content_type.startswith("image/"):
-        extracted_text = extract_text_from_image(upload_bytes)
-    elif file.content_type == "application/pdf":
-        extracted_text = extract_text_from_pdf(upload_bytes)
-    else:
-        extracted_text = ""
+    # Robust OCR extraction
+    try:
+        if file.content_type.startswith("image/"):
+            extracted_text = extract_text_from_image(upload_bytes)
+        elif file.content_type == "application/pdf":
+            extracted_text = extract_text_from_pdf(upload_bytes)
+        else:
+            extracted_text = ""
+    except Exception as e:
+        return JSONResponse(status_code=500, content={
+            "error": f"OCR extraction failed: {str(e)}"
+        })
 
-    # LLM explanation
-    explanation = generate_explanation_llm(extracted_text)
+    # Robust LLM explanation
+    try:
+        explanation = generate_explanation_llm(extracted_text)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={
+            "error": f"LLM explanation failed: {str(e)}"
+        })
 
-    # Store in Supabase table
+    # Store in Supabase table with error handling
     data = {
         "user_id": user_id,
         "file_url": file_url,
@@ -160,7 +171,12 @@ async def upload_document(
         "explanation": explanation,
         "title": file.filename,
     }
-    supabase.table("medical_documents").insert(data).execute()
+    try:
+        supabase.table("medical_documents").insert(data).execute()
+    except Exception as e:
+        return JSONResponse(status_code=500, content={
+            "error": f"Database insert failed: {str(e)}"
+        })
 
     return JSONResponse({
         "file_url": file_url,
