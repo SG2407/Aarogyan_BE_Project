@@ -135,7 +135,7 @@ async def upload_document(
         upload_bytes,
         {"content-type": file.content_type}
     )
-    if not res.get("Key"):
+    if not hasattr(res, "key") or not res.key:
         raise HTTPException(status_code=500, detail="Failed to upload file to storage.")
     file_url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET_NAME}/{storage_path}"
 
