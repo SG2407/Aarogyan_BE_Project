@@ -110,6 +110,7 @@ def submit_answer(request: OnboardingAnswerRequest, supabase=Depends(get_supabas
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
     return {
+        "profile": profile,
         "completion_score": score,
         "session": session,
         "next_question": next_field

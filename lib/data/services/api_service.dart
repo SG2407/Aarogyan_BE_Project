@@ -33,7 +33,7 @@ class ApiService {
   ) async {
     final response = await _dio.post(
       '/onboarding/answer',
-      data: {'user_id': userId, ...answer},
+      data: {'user_id': userId, 'answer': answer},
     );
     return response.data;
   }
