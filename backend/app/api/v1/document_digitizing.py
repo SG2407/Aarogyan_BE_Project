@@ -62,6 +62,9 @@ ALLOWED_TYPES = ["image/jpeg", "image/png", "application/pdf"]
 
 def compress_image(image: Image.Image, max_size_mb=5) -> bytes:
     # Compress image to fit under max_size_mb
+    # Convert RGBA to RGB to avoid JPEG alpha channel error
+    if image.mode == "RGBA":
+        image = image.convert("RGB")
     quality = 85
     output = io.BytesIO()
     image.save(output, format="JPEG", quality=quality)
