@@ -80,15 +80,41 @@ def submit_answer(request: OnboardingAnswerRequest, supabase=Depends(get_supabas
         return answer.get(field)
 
     def get_next_question(profile):
+        # Helper to check related table existence
+        def has_related(table, profile_id):
+            resp = supabase.table(table).select("id").eq("profile_id", profile_id).execute()
+            return bool(resp.data)
+
         for field in CRITICAL_FIELDS:
-            if not profile.get(field):
-                return field
+            if field == 'chronic_conditions':
+                if not has_related('chronic_conditions', profile['id']):
+                    return field
+            elif field == 'medications':
+                if not has_related('medications', profile['id']):
+                    return field
+            elif field == 'allergies':
+                if not has_related('allergies', profile['id']):
+                    return field
+            else:
+                if not profile.get(field):
+                    return field
         for field in IMPORTANT_FIELDS:
-            if not profile.get(field):
-                return field
+            if field == 'surgical_history':
+                if not has_related('surgical_history', profile['id']):
+                    return field
+            elif field == 'family_history':
+                if not has_related('family_history', profile['id']):
+                    return field
+            else:
+                if not profile.get(field):
+                    return field
         for field in ENHANCEMENT_FIELDS:
-            if not profile.get(field):
-                return field
+            if field == 'lab_values':
+                if not has_related('lab_values', profile['id']):
+                    return field
+            else:
+                if not profile.get(field):
+                    return field
         return None
 
     current_field = session.get("current_step") or get_next_question(profile)
@@ -126,15 +152,40 @@ def skip_question(request: OnboardingSkipRequest, supabase=Depends(get_supabase)
     if not session or not session["is_active"]:
         raise HTTPException(status_code=400, detail="No active onboarding session")
     def get_next_question(profile):
+        def has_related(table, profile_id):
+            resp = supabase.table(table).select("id").eq("profile_id", profile_id).execute()
+            return bool(resp.data)
+
         for field in CRITICAL_FIELDS:
-            if not profile.get(field):
-                return field
+            if field == 'chronic_conditions':
+                if not has_related('chronic_conditions', profile['id']):
+                    return field
+            elif field == 'medications':
+                if not has_related('medications', profile['id']):
+                    return field
+            elif field == 'allergies':
+                if not has_related('allergies', profile['id']):
+                    return field
+            else:
+                if not profile.get(field):
+                    return field
         for field in IMPORTANT_FIELDS:
-            if not profile.get(field):
-                return field
+            if field == 'surgical_history':
+                if not has_related('surgical_history', profile['id']):
+                    return field
+            elif field == 'family_history':
+                if not has_related('family_history', profile['id']):
+                    return field
+            else:
+                if not profile.get(field):
+                    return field
         for field in ENHANCEMENT_FIELDS:
-            if not profile.get(field):
-                return field
+            if field == 'lab_values':
+                if not has_related('lab_values', profile['id']):
+                    return field
+            else:
+                if not profile.get(field):
+                    return field
         return None
     next_field = get_next_question(profile)
     supabase.table("onboarding_sessions").update({"current_step": next_field}).eq("user_id", user_id).execute()
