@@ -22,7 +22,12 @@ def calculate_profile_completion(profile: dict) -> float:
     # Critical fields
     critical_total = len(CRITICAL_FIELDS)
     critical_filled = sum([
-        1 if getattr(profile, field) or (field == 'chronic_conditions' and profile.chronic_conditions) or (field == 'medications' and profile.medications) or (field == 'allergies' and profile.allergies) else 0
+        1 if (
+            (field in profile and profile.get(field) not in [None, '', []]) or
+            (field == 'chronic_conditions' and profile.get('chronic_conditions')) or
+            (field == 'medications' and profile.get('medications')) or
+            (field == 'allergies' and profile.get('allergies'))
+        ) else 0
         for field in CRITICAL_FIELDS
     ])
     critical_score = (critical_filled / critical_total) * WEIGHTS['critical'] * 100
@@ -30,7 +35,11 @@ def calculate_profile_completion(profile: dict) -> float:
     # Important fields
     important_total = len(IMPORTANT_FIELDS)
     important_filled = sum([
-        1 if getattr(profile, field) or (field == 'surgical_history' and profile.surgical_history) or (field == 'family_history' and profile.family_history) else 0
+        1 if (
+            (field in profile and profile.get(field) not in [None, '', []]) or
+            (field == 'surgical_history' and profile.get('surgical_history')) or
+            (field == 'family_history' and profile.get('family_history'))
+        ) else 0
         for field in IMPORTANT_FIELDS
     ])
     important_score = (important_filled / important_total) * WEIGHTS['important'] * 100
@@ -38,7 +47,10 @@ def calculate_profile_completion(profile: dict) -> float:
     # Enhancement fields
     enhancement_total = len(ENHANCEMENT_FIELDS)
     enhancement_filled = sum([
-        1 if getattr(profile, field) or (field == 'lab_values' and profile.lab_values) else 0
+        1 if (
+            (field in profile and profile.get(field) not in [None, '', []]) or
+            (field == 'lab_values' and profile.get('lab_values'))
+        ) else 0
         for field in ENHANCEMENT_FIELDS
     ])
     enhancement_score = (enhancement_filled / enhancement_total) * WEIGHTS['enhancement'] * 100
