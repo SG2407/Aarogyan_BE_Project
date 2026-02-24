@@ -9,12 +9,12 @@ import re
 router = APIRouter()
 
 @router.get("/onboarding/profile", summary="Get user medical profile and completion score")
-def get_profile(user_id: int, supabase=Depends(get_supabase)):
-    # Fetch medical profile from Supabase
+def get_profile(user_id: str, supabase=Depends(get_supabase)):
+    # Fetch medical profile from Supabase using UUID user_id
     profile_resp = supabase.table("user_medical_profiles").select("*").eq("user_id", user_id).execute()
     profile = profile_resp.data[0] if profile_resp.data else None
     if not profile:
-        # Auto-create empty medical profile for user
+        # Auto-create empty medical profile for user (UUID)
         insert_resp = supabase.table("user_medical_profiles").insert({"user_id": user_id}).execute()
         profile = insert_resp.data[0]
     score = calculate_profile_completion(profile)
@@ -25,7 +25,7 @@ def get_profile(user_id: int, supabase=Depends(get_supabase)):
     return {"profile": profile, "completion_score": score, "next_question": next_question}
 
 @router.post("/onboarding/start", summary="Start onboarding session")
-def start_onboarding(user_id: int, supabase=Depends(get_supabase)):
+def start_onboarding(user_id: str, supabase=Depends(get_supabase)):
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
     if session and session["is_active"]:
@@ -35,7 +35,7 @@ def start_onboarding(user_id: int, supabase=Depends(get_supabase)):
     return {"session": session}
 
 @router.post("/onboarding/answer", summary="Submit onboarding answer and update profile")
-def submit_answer(user_id: int, answer: dict, supabase=Depends(get_supabase)):
+def submit_answer(user_id: str, answer: dict, supabase=Depends(get_supabase)):
     profile_resp = supabase.table("user_medical_profiles").select("*").eq("user_id", user_id).execute()
     profile = profile_resp.data[0] if profile_resp.data else None
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
@@ -95,7 +95,7 @@ def submit_answer(user_id: int, answer: dict, supabase=Depends(get_supabase)):
     }
 
 @router.post("/onboarding/skip", summary="Skip current onboarding question")
-def skip_question(user_id: int, supabase=Depends(get_supabase)):
+def skip_question(user_id: str, supabase=Depends(get_supabase)):
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
     profile_resp = supabase.table("user_medical_profiles").select("*").eq("user_id", user_id).execute()
@@ -120,7 +120,7 @@ def skip_question(user_id: int, supabase=Depends(get_supabase)):
     return {"session": session, "next_question": next_field}
 
 @router.post("/onboarding/end", summary="End onboarding session manually")
-def end_onboarding(user_id: int, supabase=Depends(get_supabase)):
+def end_onboarding(user_id: str, supabase=Depends(get_supabase)):
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
     if session:
