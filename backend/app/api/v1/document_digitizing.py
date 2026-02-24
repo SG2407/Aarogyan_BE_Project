@@ -130,7 +130,11 @@ async def upload_document(
     # Upload to Supabase Storage
     file_ext = os.path.splitext(file.filename)[-1]
     storage_path = f"{user_id}/{file.filename}"
-    res = supabase.storage.from_(BUCKET_NAME).upload(storage_path, upload_bytes, file.content_type)
+    res = supabase.storage.from_(BUCKET_NAME).upload(
+        storage_path,
+        upload_bytes,
+        {"content-type": file.content_type}
+    )
     if not res.get("Key"):
         raise HTTPException(status_code=500, detail="Failed to upload file to storage.")
     file_url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET_NAME}/{storage_path}"
