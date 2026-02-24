@@ -30,27 +30,19 @@ class MedicalOnboardingModal extends StatelessWidget {
           const SizedBox(height: 12),
           TextField(
             controller: answerController,
-            decoration: const InputDecoration(
-              labelText: 'Your answer',
-            ),
+            decoration: const InputDecoration(labelText: 'Your answer'),
           ),
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: onSkip,
-          child: const Text('Skip'),
-        ),
+        TextButton(onPressed: onSkip, child: const Text('Skip')),
         TextButton(
           onPressed: () {
             onSubmit({'response': answerController.text});
           },
           child: const Text('Submit'),
         ),
-        TextButton(
-          onPressed: onClose,
-          child: const Text('Close'),
-        ),
+        TextButton(onPressed: onClose, child: const Text('Close')),
       ],
     );
   }

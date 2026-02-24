@@ -21,7 +21,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     final authState = ref.read(authProvider);
     if (authState.isAuthenticated && authState.user != null) {
-      Future.microtask(() => ref.read(onboardingProvider.notifier).checkProfileCompletion(authState.user!.id));
+      Future.microtask(
+        () => ref
+            .read(onboardingProvider.notifier)
+            .checkProfileCompletion(authState.user!.id),
+      );
     }
   }
 
@@ -32,7 +36,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final onboardingState = ref.watch(onboardingProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (onboardingState.showOnboarding && onboardingState.currentQuestion != null) {
+      if (onboardingState.showOnboarding &&
+          onboardingState.currentQuestion != null) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -40,7 +45,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             question: onboardingState.currentQuestion!,
             completionScore: onboardingState.completionScore,
             onSubmit: (answer) {
-              ref.read(onboardingProvider.notifier).submitAnswer(user!.id, answer);
+              ref
+                  .read(onboardingProvider.notifier)
+                  .submitAnswer(user!.id, answer);
             },
             onSkip: () {
               ref.read(onboardingProvider.notifier).skipQuestion(user!.id);

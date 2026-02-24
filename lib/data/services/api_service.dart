@@ -7,30 +7,43 @@ import 'storage_service.dart';
 
 /// API Service for authentication
 class ApiService {
-    /// Update current user profile
-    Future<User> updateProfile(Map<String, dynamic> updateData) async {
-      try {
-        final response = await _dio.put(ApiConfig.me, data: updateData);
-        return User.fromJson(response.data);
-      } on DioException catch (e) {
-        throw Exception('Failed to update profile: ${e.message}');
-      }
+  /// Update current user profile
+  Future<User> updateProfile(Map<String, dynamic> updateData) async {
+    try {
+      final response = await _dio.put(ApiConfig.me, data: updateData);
+      return User.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Failed to update profile: ${e.message}');
     }
+  }
+
   /// Get medical profile and completion score
   Future<Map<String, dynamic>> getMedicalProfile(String userId) async {
-    final response = await _dio.get('/onboarding/profile', queryParameters: {'user_id': userId});
+    final response = await _dio.get(
+      '/onboarding/profile',
+      queryParameters: {'user_id': userId},
+    );
     return response.data;
   }
 
   /// Submit onboarding answer
-  Future<Map<String, dynamic>> submitOnboardingAnswer(String userId, Map<String, dynamic> answer) async {
-    final response = await _dio.post('/onboarding/answer', data: {'user_id': userId, ...answer});
+  Future<Map<String, dynamic>> submitOnboardingAnswer(
+    String userId,
+    Map<String, dynamic> answer,
+  ) async {
+    final response = await _dio.post(
+      '/onboarding/answer',
+      data: {'user_id': userId, ...answer},
+    );
     return response.data;
   }
 
   /// Skip onboarding question
   Future<Map<String, dynamic>> skipOnboardingQuestion(String userId) async {
-    final response = await _dio.post('/onboarding/skip', data: {'user_id': userId});
+    final response = await _dio.post(
+      '/onboarding/skip',
+      data: {'user_id': userId},
+    );
     return response.data;
   }
 

@@ -1,5 +1,5 @@
 # Profile completion scoring logic for medical onboarding
-from app.models.medical_profile import UserMedicalProfile, ChronicCondition, Medication, Allergy, SurgicalHistory, FamilyHistory, LabValue
+
 
 CRITICAL_FIELDS = [
     'age', 'biological_sex', 'chronic_conditions', 'medications', 'allergies'
@@ -18,7 +18,7 @@ WEIGHTS = {
 }
 
 
-def calculate_profile_completion(profile: UserMedicalProfile) -> float:
+def calculate_profile_completion(profile: dict) -> float:
     # Critical fields
     critical_total = len(CRITICAL_FIELDS)
     critical_filled = sum([

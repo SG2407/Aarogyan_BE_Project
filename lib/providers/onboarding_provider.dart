@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/services/api_service.dart';
 
-final onboardingProvider = StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
-  return OnboardingNotifier(ApiService());
-});
+final onboardingProvider =
+    StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
+      return OnboardingNotifier(ApiService());
+    });
 
 class OnboardingState {
   final bool showOnboarding;
@@ -41,7 +42,7 @@ class OnboardingState {
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
   final ApiService apiService;
   OnboardingNotifier(this.apiService)
-      : super(OnboardingState(showOnboarding: false, completionScore: 0));
+    : super(OnboardingState(showOnboarding: false, completionScore: 0));
 
   Future<void> checkProfileCompletion(String userId) async {
     state = state.copyWith(isLoading: true);
