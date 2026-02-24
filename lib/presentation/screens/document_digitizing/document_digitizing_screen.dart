@@ -63,9 +63,9 @@ class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
       });
     } catch (e) {
       setState(() => _isDeleting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete document: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to delete document: $e')));
     }
   }
 

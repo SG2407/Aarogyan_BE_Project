@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 
 from app.api.v1 import auth, ai_assistant, document_digitizing
+from app.api.onboarding import router as onboarding_router
+from app.api.profile_edit import router as profile_edit_router
 
 # Import dependencies for proper loading
 from app.api.dependencies import get_current_user
@@ -18,6 +20,16 @@ app.include_router(
     document_digitizing.router,
     prefix=f"{settings.API_V1_PREFIX}/documents",
     tags=["Document Digitizing"]
+)
+app.include_router(
+    onboarding_router,
+    prefix=f"{settings.API_V1_PREFIX}",
+    tags=["Onboarding"]
+)
+app.include_router(
+    profile_edit_router,
+    prefix=f"{settings.API_V1_PREFIX}",
+    tags=["Profile Edit"]
 )
 
 # CORS Middleware - Allow Flutter app to make requests

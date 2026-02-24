@@ -2,17 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/theme_provider.dart';
+import '../../../providers/onboarding_provider.dart';
+import 'medical_onboarding_modal.dart';
 import '../settings/settings_screen.dart';
 import '../ai_assistant_screen.dart';
 import '../document_digitizing/document_digitizing_screen.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final authState = ref.read(authProvider);
+    if (authState.isAuthenticated && authState.user != null) {
+      Future.microtask(() => ref.read(onboardingProvider.notifier).checkProfileCompletion(authState.user!.id));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
+    final onboardingState = ref.watch(onboardingProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (onboardingState.showOnboarding && onboardingState.currentQuestion != null) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => MedicalOnboardingModal(
+            question: onboardingState.currentQuestion!,
+            completionScore: onboardingState.completionScore,
+            onSubmit: (answer) {
+              ref.read(onboardingProvider.notifier).submitAnswer(user!.id, answer);
+            },
+            onSkip: () {
+              ref.read(onboardingProvider.notifier).skipQuestion(user!.id);
+            },
+            onClose: () {
+              ref.read(onboardingProvider.notifier).closeOnboarding();
+              Navigator.of(context).pop();
+            },
+          ),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
