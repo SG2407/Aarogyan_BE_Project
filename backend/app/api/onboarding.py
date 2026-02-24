@@ -1,5 +1,12 @@
 # Onboarding API endpoints for medical profile
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
+class OnboardingAnswerRequest(BaseModel):
+    user_id: str
+    answer: dict
+
+class OnboardingSkipRequest(BaseModel):
+    user_id: str
 from app.core.database import get_supabase
 ## ORM model imports removed; only Supabase client is used
 from app.core.profile_scoring import calculate_profile_completion, CRITICAL_FIELDS, IMPORTANT_FIELDS, ENHANCEMENT_FIELDS
@@ -47,7 +54,9 @@ def start_onboarding(user_id: str, supabase=Depends(get_supabase)):
     return {"session": session}
 
 @router.post("/onboarding/answer", summary="Submit onboarding answer and update profile")
-def submit_answer(user_id: str, answer: dict, supabase=Depends(get_supabase)):
+def submit_answer(request: OnboardingAnswerRequest, supabase=Depends(get_supabase)):
+    user_id = request.user_id
+    answer = request.answer
     profile_resp = supabase.table("user_medical_profiles").select("*").eq("user_id", user_id).execute()
     profile = profile_resp.data[0] if profile_resp.data else None
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
@@ -107,7 +116,8 @@ def submit_answer(user_id: str, answer: dict, supabase=Depends(get_supabase)):
     }
 
 @router.post("/onboarding/skip", summary="Skip current onboarding question")
-def skip_question(user_id: str, supabase=Depends(get_supabase)):
+def skip_question(request: OnboardingSkipRequest, supabase=Depends(get_supabase)):
+    user_id = request.user_id
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
     profile_resp = supabase.table("user_medical_profiles").select("*").eq("user_id", user_id).execute()
