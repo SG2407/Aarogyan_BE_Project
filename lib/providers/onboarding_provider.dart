@@ -75,7 +75,12 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   Future<void> skipQuestion(String userId) async {
     state = state.copyWith(isLoading: true);
     final resp = await apiService.skipOnboardingQuestion(userId);
+    final score = resp['completion_score'] as double;
+    final show = score < 70;
     state = state.copyWith(
+      showOnboarding: show,
+      completionScore: score,
+      profile: resp['profile'] as Map<String, dynamic>,
       currentQuestion: resp['next_question'] as String?,
       isLoading: false,
     );

@@ -140,7 +140,16 @@ def skip_question(request: OnboardingSkipRequest, supabase=Depends(get_supabase)
     supabase.table("onboarding_sessions").update({"current_step": next_field}).eq("user_id", user_id).execute()
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
-    return {"session": session, "next_question": next_field}
+    # Also return updated profile and completion_score for frontend state sync
+    profile_resp = supabase.table("user_medical_profiles").select("*").eq("user_id", user_id).execute()
+    profile = profile_resp.data[0] if profile_resp.data else None
+    score = calculate_profile_completion(profile)
+    return {
+        "profile": profile,
+        "completion_score": score,
+        "session": session,
+        "next_question": next_field
+    }
 
 @router.post("/onboarding/end", summary="End onboarding session manually")
 def end_onboarding(user_id: str, supabase=Depends(get_supabase)):
