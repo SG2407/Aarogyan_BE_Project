@@ -18,10 +18,22 @@ def get_profile(user_id: str, supabase=Depends(get_supabase)):
         insert_resp = supabase.table("user_medical_profiles").insert({"user_id": user_id}).execute()
         profile = insert_resp.data[0]
     score = calculate_profile_completion(profile)
-    # Optionally, trigger onboarding session if not present
+    # Ensure onboarding session exists and is active
     session_resp = supabase.table("onboarding_sessions").select("*").eq("user_id", user_id).execute()
     session = session_resp.data[0] if session_resp.data else None
-    next_question = session["current_step"] if session and session["is_active"] else None
+    if not session or not session.get("is_active", False):
+        # Create a new onboarding session if missing or inactive
+        insert_resp = supabase.table("onboarding_sessions").insert({"user_id": user_id, "is_active": True}).execute()
+        session = insert_resp.data[0]
+    # Determine next question
+    next_question = session.get("current_step")
+    if not next_question:
+        # If current_step is not set, pick the first unanswered field
+        for field in CRITICAL_FIELDS + IMPORTANT_FIELDS + ENHANCEMENT_FIELDS:
+            if not profile.get(field):
+                next_question = field
+                supabase.table("onboarding_sessions").update({"current_step": next_question}).eq("user_id", user_id).execute()
+                break
     return {"profile": profile, "completion_score": score, "next_question": next_question}
 
 @router.post("/onboarding/start", summary="Start onboarding session")
