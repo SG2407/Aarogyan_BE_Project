@@ -102,7 +102,14 @@ class _DocumentDigitizingScreenState extends State<DocumentDigitizingScreen> {
         _isUploading = false;
         _explanation = result['explanation'] ?? '';
       });
-      _fetchDocuments();
+      await _fetchDocuments();
+      if (_documents.isNotEmpty) {
+        final latestDoc = _documents.first;
+        setState(() {
+          _selectedDocument = latestDoc;
+          _explanation = latestDoc['explanation'] ?? '';
+        });
+      }
     } catch (e) {
       setState(() {
         _uploadStatus = 'Upload failed: $e';

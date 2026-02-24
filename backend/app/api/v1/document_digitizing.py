@@ -133,7 +133,7 @@ async def upload_document(
     res = supabase.storage.from_(BUCKET_NAME).upload(
         storage_path,
         upload_bytes,
-        {"content-type": file.content_type}
+        {"content-type": file.content_type, "upsert": True}
     )
     if not hasattr(res, "key") or not res.key:
         raise HTTPException(status_code=500, detail="Failed to upload file to storage.")
